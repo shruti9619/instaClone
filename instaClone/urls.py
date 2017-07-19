@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from myApp.views import signup_view
+from myApp.views import signup_view, login_view, login_success_view
 
 
 urlpatterns = [
-    url('',signup_view),
-    url(r'^admin/', admin.site.urls)
+
+    url('login/',login_view),
+    url('login_success/',login_success_view),
+    url('',signup_view)
+
 ]

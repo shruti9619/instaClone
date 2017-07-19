@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<form method="post">
+       {% csrf_token %}
+      <div class="form-group">
+      <label>Name:</label>
+      {{LoginForm.name}}
+    </div>
+
+    <div class="form-group">
+      <label>Password:</label>
+      {{LoginForm.password}}
+    </div>
+
+    <button type="submit" class="btn btn-default">Login</button>
+
+  </form>
+
+
+</body>
+</html>

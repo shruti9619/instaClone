@@ -3,16 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 
-Click Me!
-
-<input type="button" value="Hey"/><br />
 Time : {{today}} {{x}}
-<br />
-<form>{{signup_form}}
-    <input type="submit" value="Submit"></form>
+<br /><br /><br />
+<div class="container">
+  <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+      <label>Name:</label>
+      {{signup_form.name}}
+    </div>
+    <div class="form-group">
+      <label>Email:</label>
+      {{signup_form.email}}
+    </div>
+    <div class="form-group">
+      <label>Password:</label>
+      {{signup_form.password}}
+    </div>
 
+    <button type="submit" class="btn btn-default">Sign Up</button>
+
+  </form>
+
+    <a href="login/">Already Registered? Login</a>
+</div>
 </body>
 </html>
