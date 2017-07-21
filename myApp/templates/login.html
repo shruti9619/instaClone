@@ -3,26 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+
+
+
+    <link href="https://fonts.googleapis.com/css?family=Artifika" rel="stylesheet">
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<link rel="stylesheet" href="css/sheet1.css" type="text/css" >
+    <style>
+         .backgroundcol
+        {
+        height: 100%;
+       background: linear-gradient(rgba(154, 18, 179,0.7),rgba(255,255,255,0.3),rgba(154, 18, 179,0.6) ) no-repeat center center fixed;
+        }
+
+         .centercon{
+      margin-left: 35vw;
+      margin-top: 10vh;
+      min-height : 40vh;
+      max-width: 30vw;
+      padding: 10vh;
+      text-align:center;
+    }
+
+
+
+    .borders{
+
+      border:1vw solid #913D88;
+      background-color: rgba(253, 227, 167,0.5);
+      border-radius: 5vh;
+      box-shadow: 0px 10px 10px #888888;
+    }
+
+    .centertext{
+    text-align:center;
+    color:#913D88;
+    font-family: 'Artifika', serif;
+    }
+
+
+
+
+    .left-mover {
+    position: relative;
+    -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+    animation-name: left-shift;
+    animation-duration: 2s;
+    animation-delay: 1s;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+}
+
+
+
+/* Standard syntax */
+@keyframes left-shift {
+    from   {}
+    to {background-color:grey; margin-left:2vw;}
+}
+</style>
+
 </head>
-<body>
+<body class="backgroundcol">
 
+<div class="container centercon borders "> <!--left-mover-->
 
-
+    <h1><span class="centertext">SignIn</span></h1>
+    <br /><br />
 <form method="post">
-       {% csrf_token %}
+      {% csrf_token %}
       <div class="form-group">
-      <label>Name:</label>
-      {{form.name}}
-    </div>
+
+          <input id="username" class="form-control" type="text" name="username" placeholder="Name" value={{name }} >
+      </div>
 
     <div class="form-group">
-      <label>Password:</label>
-      {{form.password}}
+        <input id="pwd" type="password" name="username" class="form-control" placeholder="Password" value={{password }}>
     </div>
 
-    <button type="submit" class="btn btn-default">Login</button>
+    <button type="submit" class="btn btn-default">Sign In</button>
 
   </form>
+</div>
+
 <h4>
     {{msg}}
 </h4>
