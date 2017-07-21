@@ -7,21 +7,26 @@
 <body>
 
 
+
 <form method="post">
        {% csrf_token %}
       <div class="form-group">
       <label>Name:</label>
-      {{LoginForm.name}}
+      {{form.name}}
     </div>
 
     <div class="form-group">
       <label>Password:</label>
-      {{LoginForm.password}}
+      {{form.password}}
     </div>
 
     <button type="submit" class="btn btn-default">Login</button>
 
   </form>
+<h4>
+    {{msg}}
+</h4>
+
 
 
 </body>

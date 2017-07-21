@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import datetime
 from forms import SignUpForm, LoginForm
 from django.contrib.auth.hashers import make_password, check_password
-from models import User
+from models import User, SessionToken
 # Create your views here.
 
 
@@ -31,7 +31,6 @@ def signup_view(request):
 
 def login_view(request):
 
-    print 'utter shit'
     response_data = {}
     if request.method == "POST":
 
@@ -42,20 +41,41 @@ def login_view(request):
             user = User.objects.filter(name=username).first()
 
             if user:
-                if check_password(pwd,user.password):
+                if check_password(pwd, user.password):
+                    token = SessionToken(user=user)
+                    token.create_token()
+                    token.save()
                     print 'User is logged in'
-                    return render(request,'login_success.html')
+                    response = redirect('login_success/')
+                    response.set_cookie(key='session_token', value=token.session_token)
+                    return response
+                    #return render(request,'login_success.html')
                 else:
-                    print 'Incorrect Password! Please try again!'
-                    print 'critical shit'
+                    response_data['msg'] = "Incorrect Password! Please try again!"
+            else:
+                response_data['msg'] = "Incorrect Username! Please try again!"
 
 
-    elif request.method == "GET":
-        print 'SHit'
-        form = LoginForm()
-    return render(request,'login.html',{'LoginForm': form})
+
+    response_data['form'] = LoginForm()
+    return render(request,'login.html',response_data)
 
 
 
 def login_success_view(request):
-    return render(request,'login_success.html')
+    response_data = {}
+    user = check_validation(request)
+    if user is not None:
+        response_data['msg'] = "Welcome " + user.name
+    else:
+        response_data['msg'] = 'Cannot fetch the session details'
+    return render(request,'login_success.html',response_data)
+
+
+def check_validation(request):
+  if request.COOKIES.get('session_token'):
+    sess = SessionToken.objects.filter(session_token=request.COOKIES.get('session_token')).first()
+    if sess:
+      return sess.user
+  else:
+    return None
