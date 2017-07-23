@@ -22,7 +22,7 @@ def signup_view(request):
             #storing to the db
             user = User(name = name, username=username, password = make_password(password), email = email)
             user.save()
-            return render(request,'signup_success.html',{'name':name})
+            return render(request,'signup_success.html', {'name':name})
 
     if request.method == "GET":
         today = datetime.date.today()
@@ -34,15 +34,16 @@ def login_view(request):
 
     response_data = {}
     if request.method == "POST":
-
+        print 'post in login'
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            pwd = form.cleaned_data.get('password')
+            username = form.cleaned_data['username']
+            pwd = form.cleaned_data['password']
             user = User.objects.filter(username=username).first()
 
             if user:
                 if check_password(pwd, user.password):
+
                     token = SessionToken(user=user)
                     token.create_token()
                     token.save()
@@ -55,15 +56,14 @@ def login_view(request):
                     response_data['msg'] = "Incorrect Password! Please try again!"
             else:
                 response_data['msg'] = "Incorrect Username! Please try again!"
-
-
-
     response_data['form'] = LoginForm()
+    print 'loginviewexit'
     return render(request,'login.html',response_data)
 
 
 
 def login_success_view(request):
+    print 'loginsuccessenter'
     response_data = {}
     user = check_validation(request)
     if user is not None:
