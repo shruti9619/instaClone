@@ -25,7 +25,8 @@
 </head>
 
 
-<body class="backgroundcol">
+<body class="backgroundcol" style="background: url('{% static 'images/backgroundkids.jpg' %}')
+no-repeat center center fixed; display:contain;">
 
 <div class="container centercon borders "> <!--left-mover-->
 
@@ -39,7 +40,7 @@
       </div>
 
     <div class="form-group">
-        <input id="pwd" type="password" name="username" class="form-control" placeholder="Password" value={{password }}>
+        <input id="pwd" type="password" name="pwd" class="form-control" placeholder="Password" value={{password }}>
     </div>
 
     <button type="submit" class="btn btn-default">Sign In</button>

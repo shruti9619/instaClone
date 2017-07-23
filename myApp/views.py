@@ -15,18 +15,19 @@ def signup_view(request):
         sign_up_form = SignUpForm(request.POST)
         if sign_up_form.is_valid():
             name = sign_up_form.cleaned_data['name']
+            username = sign_up_form.cleaned_data['username'];
             email = sign_up_form.cleaned_data['email']
             password = sign_up_form.cleaned_data['password']
 
             #storing to the db
-            user = User(name = name, password = make_password(password), email = email)
+            user = User(name = name, username=username, password = make_password(password), email = email)
             user.save()
             return render(request,'signup_success.html',{'name':name})
 
     if request.method == "GET":
         today = datetime.date.today()
         sign_up_form = SignUpForm()
-    return render(request, 'index.html', {'today': today, 'signup_form': sign_up_form})
+    return render(request, 'index.html', {'signup_form': sign_up_form})
 
 
 def login_view(request):
@@ -36,9 +37,9 @@ def login_view(request):
 
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('name')
+            username = form.cleaned_data.get('username')
             pwd = form.cleaned_data.get('password')
-            user = User.objects.filter(name=username).first()
+            user = User.objects.filter(username=username).first()
 
             if user:
                 if check_password(pwd, user.password):
