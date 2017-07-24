@@ -3,14 +3,14 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 import datetime
-from forms import SignUpForm, LoginForm
+from forms import SignUpForm, LoginForm, PostForm
 from django.contrib.auth.hashers import make_password, check_password
-from models import User, SessionToken
+from models import User, SessionToken, Post
 # Create your views here.
 
 
 def signup_view(request):
-
+    response_data = {}
     if request.method == "POST":
         sign_up_form = SignUpForm(request.POST)
         if sign_up_form.is_valid():
@@ -18,6 +18,11 @@ def signup_view(request):
             username = sign_up_form.cleaned_data['username'];
             email = sign_up_form.cleaned_data['email']
             password = sign_up_form.cleaned_data['password']
+
+            if len(username) < 4:
+                response_data['msg']= 'Username should have atleast 4 characters'
+            if len(password) < 5:
+                response_data['msg'] = 'Password should have atleast 5 characters'
 
             #storing to the db
             user = User(name = name, username=username, password = make_password(password), email = email)
@@ -71,6 +76,30 @@ def login_success_view(request):
     else:
         response_data['msg'] = 'Cannot fetch the session details'
     return render(request,'login_success.html',response_data)
+
+
+def post_view(request):
+
+    user = check_validation(request)
+
+    if user:
+        if request.method == 'GET':
+            form = PostForm()
+            return render(request, 'post.html', {'form': form})
+        elif request.method == 'POST':
+            form = PostForm(request.POST, request.FILES)
+            if form.is_valid():
+                image = form.cleaned_data['image']
+                caption = form.cleaned_data['captions']
+
+                post = Post(user=user, image=image, captions=caption)
+                post.save()
+        return render(request,'login.html')
+    else:
+        return redirect('/login/')
+
+
+
 
 
 def check_validation(request):
