@@ -3,10 +3,17 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 import datetime
-from forms import SignUpForm, LoginForm, PostForm
+from forms import SignUpForm, LoginForm, PostForm, LikeForm, CommentForm
 from django.contrib.auth.hashers import make_password, check_password
-from models import User, SessionToken, Post
+from models import User, SessionToken, Post, Like, Comment
+from instaClone.settings import BASE_DIR
+from imgurpython import ImgurClient
 # Create your views here.
+
+
+CLIENT_ID = '9b30aed478cd2af'
+
+CLIENT_SECRET = 'f453269f0a01ef73760d0343ea5b4d9294ec06de'
 
 
 def signup_view(request):
@@ -71,11 +78,20 @@ def login_success_view(request):
     print 'loginsuccessenter'
     response_data = {}
     user = check_validation(request)
-    if user is not None:
-        response_data['msg'] = "Welcome " + user.name
+
+    if user:
+        posts = Post.objects.all().order_by('-created_on')
+        #if Like.objects.filter(user=user, post_id=post_id).exists()
+        for post in posts:
+            existing_like = Like.objects.filter(post_id=post.id, user=user).first()
+            if existing_like:
+                post.creator_has_liked = True
+                print 'has liked!'
+        #num_of_likes =
+        return render(request, 'login_success.html', {'posts': posts, 'msg':'Welcome '+user.username})
     else:
-        response_data['msg'] = 'Cannot fetch the session details'
-    return render(request,'login_success.html',response_data)
+        return redirect('/login/')
+    #return render(request,'login_success.html',response_data)
 
 
 def post_view(request):
@@ -91,14 +107,55 @@ def post_view(request):
             if form.is_valid():
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
-
                 post = Post(user=user, image=image, captions=caption)
+                client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+                path = str(BASE_DIR +'\\user_image_set\\'+ post.image.url)
+                print post.image_url
+                post.image_url = client.upload_from_path(path, anon=True)['link']
+
                 post.save()
-        return render(request,'login.html')
+            return render(request,'login_success.html')
     else:
         return redirect('/login/')
 
 
+def like_view(request):
+    user = check_validation(request)
+    if user and request.method == 'POST':
+        form = LikeForm(request.POST)
+        if form.is_valid():
+            post_id = form.cleaned_data.get('post').id
+
+            existing_like = Like.objects.filter(post_id=post_id, user=user).first()
+
+            if not existing_like:
+                print 'liking post'
+                Like.objects.create(post_id=post_id, user=user)
+            else:
+                print ' unliking post'
+                existing_like.delete()
+
+            return redirect('/login_success/')
+
+    else:
+        return redirect('/login/')
+
+
+
+def comment_view(request):
+    user = check_validation(request)
+    if user and request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            post_id = form.cleaned_data.get('post').id
+            comment_text = form.cleaned_data.get('comment_text')
+            comment = Comment.objects.create(user=user, post_id=post_id, comment_text=comment_text)
+            comment.save()
+            return redirect('/login_success/')
+        else:
+            return redirect('/login_success/')
+    else:
+        return redirect('/login')
 
 
 

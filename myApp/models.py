@@ -20,6 +20,7 @@ class User(models.Model):
 
 
 class SessionToken(models.Model):
+    # this will get userid as the foreign key
     user = models.ForeignKey(User)
     session_token = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -37,3 +38,28 @@ class Post(models.Model):
     captions = models.CharField(max_length=240)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+    creator_has_liked = False
+
+    @property
+    def like_count(self):
+        return len(Like.objects.filter(post=self))
+
+    @property
+    def comments(self):
+        return Comment.objects.filter(post=self).order_by('-created_on')
+
+#one post has many likes, one user has liked many posts, one use has many posts
+class Like(models.Model):
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    comment_text = models.CharField(max_length=555)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+

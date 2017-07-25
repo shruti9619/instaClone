@@ -1,4 +1,4 @@
-from models import User, Post
+from models import User, Post, Like, Comment
 from django import forms
 
 
@@ -18,3 +18,14 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['image', 'captions']
+
+
+class LikeForm(forms.ModelForm):
+    class Meta:
+        model = Like
+        fields = ['post']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment_text', 'post']
