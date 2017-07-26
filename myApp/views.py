@@ -16,6 +16,7 @@ CLIENT_ID = '9b30aed478cd2af'
 CLIENT_SECRET = 'f453269f0a01ef73760d0343ea5b4d9294ec06de'
 
 
+# password stored using hashing
 def signup_view(request):
     response_data = {}
     if request.method == "POST":
@@ -42,6 +43,7 @@ def signup_view(request):
     return render(request, 'index.html', {'signup_form': sign_up_form})
 
 
+# method to show login form
 def login_view(request):
 
     response_data = {}
@@ -69,13 +71,13 @@ def login_view(request):
             else:
                 response_data['msg'] = "Incorrect Username! Please try again!"
     response_data['form'] = LoginForm()
-    print 'loginviewexit'
+    # print 'loginviewexit'
     return render(request,'login.html',response_data)
 
 
-
+# method visible after login is successful and feeds come here
 def login_success_view(request):
-    print 'loginsuccessenter'
+    # print 'loginsuccessenter'
     response_data = {}
     user = check_validation(request)
 
@@ -94,6 +96,7 @@ def login_success_view(request):
     #return render(request,'login_success.html',response_data)
 
 
+# provides view for the page to add posts
 def post_view(request):
 
     user = check_validation(request)
@@ -108,10 +111,16 @@ def post_view(request):
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
                 post = Post(user=user, image=image, captions=caption)
+                # adding imgur client to maintain url of images
                 client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
-                path = str(BASE_DIR +'\\user_image_set\\'+ post.image.url)
+                path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
                 print post.image_url
-                post.image_url = client.upload_from_path(path, anon=True)['link']
+
+                # try catch edge case if connection fails or image can't be uploaded
+                try:
+                    post.image_url = client.upload_from_path(path, anon=True)['link']
+                except:
+                    return render('post.html', {'msg': 'Failed to upload! Try again later'})
 
                 post.save()
             return render(request,'login_success.html')
@@ -119,6 +128,7 @@ def post_view(request):
         return redirect('/login/')
 
 
+# provides method for like functionality
 def like_view(request):
     user = check_validation(request)
     if user and request.method == 'POST':
@@ -129,10 +139,10 @@ def like_view(request):
             existing_like = Like.objects.filter(post_id=post_id, user=user).first()
 
             if not existing_like:
-                print 'liking post'
+                # print 'liking post'
                 Like.objects.create(post_id=post_id, user=user)
             else:
-                print ' unliking post'
+                # print ' unliking post'
                 existing_like.delete()
 
             return redirect('/login_success/')
@@ -141,7 +151,7 @@ def like_view(request):
         return redirect('/login/')
 
 
-
+# method to provide form to add a comment
 def comment_view(request):
     user = check_validation(request)
     if user and request.method == 'POST':
@@ -158,7 +168,7 @@ def comment_view(request):
         return redirect('/login')
 
 
-
+# method to return current user instance if valid and return none is invalid user
 def check_validation(request):
   if request.COOKIES.get('session_token'):
     sess = SessionToken.objects.filter(session_token=request.COOKIES.get('session_token')).first()

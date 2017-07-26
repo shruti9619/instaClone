@@ -55,11 +55,12 @@ class Like(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
-
+# only upvote count is maintained for each comment as per business logic
 class Comment(models.Model):
     user = models.ForeignKey(User)
     post = models.ForeignKey(Post)
     comment_text = models.CharField(max_length=555)
+    upvote_num = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
