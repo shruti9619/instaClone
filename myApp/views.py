@@ -134,7 +134,7 @@ def post_view(request):
                     return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
 
                 post.save()
-            return render(request,'login_success.html')
+            return render(request,'login_success.html',{'msg': 'Post added successfully!'})
     else:
         return redirect('/login/')
 
