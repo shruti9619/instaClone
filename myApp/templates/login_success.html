@@ -13,13 +13,18 @@
 
 {% for post in posts %}
 
+<div>
     <h3> Posted by: {{ post.user.username }}</h3>
     <img src="{{ post.image_url }}">
+    <div>
     <span>{{ post.caption }}</span>
     <span>{{ post.created_on }}</span>
     <span>{{post.image_url}}</span>
     <span>{{post.like_count}}</span>
+        <span>{{liked_msg}}</span>
+        </div>
     <hr />
+    </div>
 
         <form method="POST" action="/like/">
           {% csrf_token %}

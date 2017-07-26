@@ -141,6 +141,7 @@ def post_view(request):
 
 # provides method for like functionality
 def like_view(request):
+    liked_msg = ''
     user = check_validation(request)
     if user and request.method == 'POST':
         form = LikeForm(request.POST)
@@ -152,11 +153,13 @@ def like_view(request):
             if not existing_like:
                 # print 'liking post'
                 Like.objects.create(post_id=post_id, user=user)
+                liked_msg = 'Liked!'
             else:
                 # print ' unliking post'
                 existing_like.delete()
+                liked_msg = 'Unliked!'
 
-            return redirect('/login_success/')
+            return render(request,'login_success.html',{'liked_msg': liked_msg})
 
     else:
         return redirect('/login/')
