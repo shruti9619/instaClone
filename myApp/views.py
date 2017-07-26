@@ -32,6 +32,16 @@ def signup_view(request):
             if len(password) < 5:
                 response_data['msg'] = 'Password should have atleast 5 characters'
 
+            # to check if user with the same username or email already exists
+            users = User.objects.all()
+            # if Like.objects.filter(user=user, post_id=post_id).exists()
+            for post in users:
+                existing_user = User.objects.filter(username=username).first()
+                if existing_user:
+                    print 'User exists!'
+                    response_data['msg'] = 'Username already exists! Try adding numbers'
+                    return render(request, 'index.html', response_data)
+
             #storing to the db
             user = User(name = name, username=username, password = make_password(password), email = email)
             user.save()
@@ -111,16 +121,17 @@ def post_view(request):
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
                 post = Post(user=user, image=image, captions=caption)
-                # adding imgur client to maintain url of images
-                client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+
+
                 path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
                 print post.image_url
-
+                # adding imgur client to maintain url of images
                 # try catch edge case if connection fails or image can't be uploaded
                 try:
+                    client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
                     post.image_url = client.upload_from_path(path, anon=True)['link']
                 except:
-                    return render('post.html', {'msg': 'Failed to upload! Try again later'})
+                    return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
 
                 post.save()
             return render(request,'login_success.html')
