@@ -190,3 +190,26 @@ def check_validation(request):
       return sess.user
   else:
     return None
+
+# method to check if img is valid for children
+def checkImage():
+    print 'x'
+
+# method to check if comment is decent or abusive with parallel dots
+def checkComment():
+    print 'y'
+
+# method to log user out of his account
+def logout_view(request):
+
+    user = check_validation(request)
+
+    if user is not None:
+        # response = redirect('login_success/')
+        # response.set_cookie(key='session_token', value=token.session_token)
+        # return response
+        latest_sessn = SessionToken.objects.filter(user=user).last()
+        if latest_sessn:
+            latest_sessn.delete()
+
+            # how to get cookies in python to delete cookie n session

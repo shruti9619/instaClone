@@ -58,6 +58,15 @@
           {{ comment.created_on }}: {{ comment.comment_text }}
         </p>
 
+          <form method="POST" action="">
+              {% csrf_token %}
+              <input type="hidden" name="post" value="{{ comment.id }}">
+
+
+            <input type="submit" class="btn btn-default" value="Upvote">
+
+          </form>
+
       {% endfor %}
 
       </div>
