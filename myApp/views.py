@@ -20,6 +20,7 @@ CLIENT_SECRET = 'f453269f0a01ef73760d0343ea5b4d9294ec06de'
 PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 
+
 # password stored using hashing
 def signup_view(request):
     response_data = {}
@@ -57,6 +58,8 @@ def signup_view(request):
     return render(request, 'index.html', {'signup_form': sign_up_form})
 
 
+
+
 # method to show login form
 def login_view(request):
 
@@ -89,6 +92,7 @@ def login_view(request):
     return render(request,'login.html',response_data)
 
 
+
 # method visible after login is successful and feeds come here
 def login_success_view(request):
     # print 'loginsuccessenter'
@@ -110,6 +114,7 @@ def login_success_view(request):
     #return render(request,'login_success.html',response_data)
 
 
+
 # provides view for the page to add posts
 def post_view(request):
 
@@ -124,23 +129,28 @@ def post_view(request):
             if form.is_valid():
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
-                post = Post(user=user, image=image, captions=caption)
+
+                if checkComment(caption) == 1:
+                    post = Post(user=user, image=image, captions=caption)
 
 
-                path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
-                print post.image_url
+                    path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
+                    print post.image_url
                 # adding imgur client to maintain url of images
                 # try catch edge case if connection fails or image can't be uploaded
-                try:
-                    client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
-                    post.image_url = client.upload_from_path(path, anon=True)['link']
-                except:
-                    return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
+                    try:
+                        client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+                        post.image_url = client.upload_from_path(path, anon=True)['link']
+                    except:
+                        return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
 
-                post.save()
-            return render(request,'login_success.html',{'msg': 'Post added successfully!'})
+                    post.save()
+                    return render(request,'login_success.html',{'msg': 'Post added successfully!'})
+                else:
+                    return render(request, 'login_success.html', {'msg': 'Please avoid use of abusive language'})
     else:
         return redirect('/login/')
+
 
 
 # provides method for like functionality
@@ -169,6 +179,7 @@ def like_view(request):
         return redirect('/login/')
 
 
+
 # method to provide form to add a comment
 def comment_view(request):
     user = check_validation(request)
@@ -187,9 +198,11 @@ def comment_view(request):
                 abuse_msg = "Please avoid use of abusive language."
             return redirect('/login_success/', {'abuse_msg': abuse_msg})
         else:
+
             return redirect('/login_success/')
     else:
         return redirect('/login')
+
 
 
 # method to return current user instance if valid and return none is invalid user
@@ -200,6 +213,7 @@ def check_validation(request):
       return sess.user
   else:
     return None
+
 
 
 # method to check if img is valid for children
@@ -214,8 +228,10 @@ def checkImage():
     #     url=image_url)
 
 
+
 # method to check if comment is decent or abusive with parallel dots
 def checkComment(commenttext):
+    req_json = None
     req_url = "https://apis.paralleldots.com/abuse"
     payload = {
   "text": commenttext,
@@ -224,19 +240,20 @@ def checkComment(commenttext):
     # 1 is for non abusive and 0 is for abusive
     try:
         req_json = requests.post(req_url, payload).json()
-    except:
-        print ""
-    if req_json is not None:
-        #sentiment = req_json['sentiment']
-        print req_json['sentence_type']
-        print req_json['confidence_score']
-        if req_json['sentence_type'] == "Non Abusive":
-            if req_json['confidence_score'] > 0.60:
-                return 1
+        if req_json is not None:
+            # sentiment = req_json['sentiment']
+            print req_json['sentence_type']
+            print req_json['confidence_score']
+            if req_json['sentence_type'] == "Non Abusive":
+                if req_json['confidence_score'] > 0.60:
+                    return 1
+                else:
+                    return 0
             else:
                 return 0
-        else:
-            return 0
+    except:
+        return 0
+
 
 
 
@@ -247,13 +264,10 @@ def logout_view(request):
     user = check_validation(request)
 
     if user is not None:
-        # response = redirect('login_success/')
-        # response.set_cookie(key='session_token', value=token.session_token)
-        # return response
         latest_sessn = SessionToken.objects.filter(user=user).last()
         if latest_sessn:
             latest_sessn.delete()
-
+            return redirect("/login/")
             # how to get cookies in python to delete cookie n session
 
 

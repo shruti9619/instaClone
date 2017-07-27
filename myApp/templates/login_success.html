@@ -4,15 +4,33 @@
     <meta charset="UTF-8">
     <title>Welcome back SocioKid</title>
     {% load staticfiles %}
+
+       <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+
 </head>
 <body class="backgroundcol" style="background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; ">
 <h1>You have successfully logged in!</h1>
 
 <h3>{{msg}}</h3>
 <button><a href="post/">Add New Post</a></button>
-
+<div style="float: right; padding: 20px; ">
+<form action="/logout/" method="POST">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-default" value="Logout">
+</form>
+</div>
 {% for post in posts %}
-
+<div style="text-align: center;">
 <div>
     <h3> Posted by: {{ post.user.username }}</h3>
     <img src="{{ post.image_url }}">
@@ -75,7 +93,7 @@
       {% endfor %}
 
       </div>
-
+</div>
   {% endfor %}
 
 

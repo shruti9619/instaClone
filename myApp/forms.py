@@ -28,4 +28,4 @@ class LikeForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['comment_text', 'post']
+        fields = ['comment_text', 'post', 'id']
