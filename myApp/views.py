@@ -8,12 +8,16 @@ from django.contrib.auth.hashers import make_password, check_password
 from models import User, SessionToken, Post, Like, Comment
 from instaClone.settings import BASE_DIR
 from imgurpython import ImgurClient
+from clarifai.rest import ClarifaiApp , Image as ClImage
+import requests
 # Create your views here.
 
 
 CLIENT_ID = '9b30aed478cd2af'
 
 CLIENT_SECRET = 'f453269f0a01ef73760d0343ea5b4d9294ec06de'
+
+PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 
 # password stored using hashing
@@ -81,7 +85,7 @@ def login_view(request):
             else:
                 response_data['msg'] = "Incorrect Username! Please try again!"
     response_data['form'] = LoginForm()
-    # print 'loginviewexit'
+    # print 'login view exit'
     return render(request,'login.html',response_data)
 
 
@@ -159,7 +163,7 @@ def like_view(request):
                 existing_like.delete()
                 liked_msg = 'Unliked!'
 
-            return render(request,'login_success.html',{'liked_msg': liked_msg})
+            return redirect('/login_success/',{'liked_msg': liked_msg})
 
     else:
         return redirect('/login/')
@@ -168,14 +172,20 @@ def like_view(request):
 # method to provide form to add a comment
 def comment_view(request):
     user = check_validation(request)
+    abuse_msg = "nothing"
     if user and request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             post_id = form.cleaned_data.get('post').id
             comment_text = form.cleaned_data.get('comment_text')
-            comment = Comment.objects.create(user=user, post_id=post_id, comment_text=comment_text)
-            comment.save()
-            return redirect('/login_success/')
+
+            print checkComment(comment_text)
+            if checkComment(comment_text) == 1:
+                comment = Comment.objects.create(user=user, post_id=post_id, comment_text=comment_text)
+                comment.save()
+            else:
+                abuse_msg = "Please avoid use of abusive language."
+            return redirect('/login_success/', {'abuse_msg': abuse_msg})
         else:
             return redirect('/login_success/')
     else:
@@ -191,13 +201,45 @@ def check_validation(request):
   else:
     return None
 
+
 # method to check if img is valid for children
 def checkImage():
-    print 'x'
+    app = ClarifaiApp(api_key='ab7ff2b9dc2a4651909930166045d371')
+
+    # get the general model
+    model = app.models.get('general-v1.3')
+    image = ClImage(file_obj=open('/home/user/image.jpeg', 'rb'))
+    model.predict([image])
+    # xd = model.predict_by_url(
+    #     url=image_url)
+
 
 # method to check if comment is decent or abusive with parallel dots
-def checkComment():
-    print 'y'
+def checkComment(commenttext):
+    req_url = "https://apis.paralleldots.com/abuse"
+    payload = {
+  "text": commenttext,
+  "apikey": PARALLEL_DOTS_KEY
+}
+    # 1 is for non abusive and 0 is for abusive
+    try:
+        req_json = requests.post(req_url, payload).json()
+    except:
+        print ""
+    if req_json is not None:
+        #sentiment = req_json['sentiment']
+        print req_json['sentence_type']
+        print req_json['confidence_score']
+        if req_json['sentence_type'] == "Non Abusive":
+            if req_json['confidence_score'] > 0.60:
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+
+
+
 
 # method to log user out of his account
 def logout_view(request):
@@ -213,3 +255,10 @@ def logout_view(request):
             latest_sessn.delete()
 
             # how to get cookies in python to delete cookie n session
+
+
+# method to create upvote for comments
+def upvote_view(request):
+    if request.method == "POST":
+        # increment upvote num
+        print 'x'
