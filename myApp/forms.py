@@ -30,7 +30,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['comment_text', 'post', 'id']
 
-class UpvoteForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['id']
+from django import forms
+
+class UpvoteForm(forms.Form):
+    id = forms.IntegerField()

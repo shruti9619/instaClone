@@ -286,25 +286,29 @@ def logout_view(request):
 # method to create upvote for comments
 def upvote_view(request):
     user = check_validation(request)
+    comment = None
     print "upvote view"
     if user and request.method == 'POST':
+
         form = UpvoteForm(request.POST)
         if form.is_valid():
-            print 'before cleaned'
-            comment_id = form.cleaned_data.get('id').id
+            print form.cleaned_data
 
-            comment = Comment.objects.filter(comment_id =comment_id).first()
+            comment_id = int(form.cleaned_data.get('id'))
+
+            comment = Comment.objects.filter(id=comment_id).first()
             print "upvoted not yet"
-            if comment:
+
+            if comment is not None:
                 # print ' unliking post'
                 print "upvoted"
                 comment.upvote_num += 1
                 comment.save()
-
+                print comment.upvote_num
+            else:
+                print 'stupid mistake'
                 #liked_msg = 'Unliked!'
 
-            return redirect('/login_success/')
-        else:
-            return redirect('/login_success/')
+        return redirect('/login_success/')
     else:
         return redirect('/login/')

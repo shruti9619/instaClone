@@ -85,8 +85,10 @@
 
           <form method="POST" action="/upvote/">
               {% csrf_token %}
+
               <input type="hidden" name="id" value="{{ comment.id }}">
-            <input type="submit" class="btn btn-default" value="Upvote">
+
+              <input type="submit" class="btn btn-default" value="Upvote">
 
           </form><span>Upvotes: {{comment.upvote_num}}</span>
 
