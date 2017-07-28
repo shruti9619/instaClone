@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 import datetime
-from forms import SignUpForm, LoginForm, PostForm, LikeForm, CommentForm
+from forms import SignUpForm, LoginForm, PostForm, LikeForm, CommentForm, UpvoteForm
 from django.contrib.auth.hashers import make_password, check_password
 from models import User, SessionToken, Post, Like, Comment
 from instaClone.settings import BASE_DIR
@@ -106,7 +106,7 @@ def login_success_view(request):
             existing_like = Like.objects.filter(post_id=post.id, user=user).first()
             if existing_like:
                 post.creator_has_liked = True
-                print 'has liked!'
+
         #num_of_likes =
         return render(request, 'login_success.html', {'posts': posts, 'msg':'Welcome '+user.username})
     else:
@@ -129,15 +129,14 @@ def post_view(request):
             if form.is_valid():
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
+                post = Post(user=user, image=image, captions=caption)
+                path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
 
-                if checkComment(caption) == 1:
-                    post = Post(user=user, image=image, captions=caption)
+                if checkComment(caption) == 1 and checkImage(path) == 1:
 
-
-                    path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
                     print post.image_url
-                # adding imgur client to maintain url of images
-                # try catch edge case if connection fails or image can't be uploaded
+                    # adding imgur client to maintain url of images
+                    # try catch edge case if connection fails or image can't be uploaded
                     try:
                         client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
                         post.image_url = client.upload_from_path(path, anon=True)['link']
@@ -147,7 +146,8 @@ def post_view(request):
                     post.save()
                     return render(request,'login_success.html',{'msg': 'Post added successfully!'})
                 else:
-                    return render(request, 'login_success.html', {'msg': 'Please avoid use of abusive language'})
+                    return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
+                    post.delete()
     else:
         return redirect('/login/')
 
@@ -196,7 +196,7 @@ def comment_view(request):
                 comment.save()
             else:
                 abuse_msg = "Please avoid use of abusive language."
-            return redirect('/login_success/', {'abuse_msg': abuse_msg})
+            return render(request,'login_success.html', {'abuse_msg': abuse_msg})
         else:
 
             return redirect('/login_success/')
@@ -217,15 +217,27 @@ def check_validation(request):
 
 
 # method to check if img is valid for children
-def checkImage():
+def checkImage(path):
     app = ClarifaiApp(api_key='ab7ff2b9dc2a4651909930166045d371')
 
     # get the general model
-    model = app.models.get('general-v1.3')
-    image = ClImage(file_obj=open('/home/user/image.jpeg', 'rb'))
-    model.predict([image])
-    # xd = model.predict_by_url(
-    #     url=image_url)
+    try:
+        model = app.models.get('general-v1.3')
+        image = ClImage(file_obj=open(path, 'rb'))
+        pred = model.predict([image])
+
+        for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
+             if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
+                 if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.5:
+                     return 0
+                 else:
+                     return 1
+             else:
+                 return 1
+        return 0
+    except:
+        return 0
+
 
 
 
@@ -273,6 +285,26 @@ def logout_view(request):
 
 # method to create upvote for comments
 def upvote_view(request):
-    if request.method == "POST":
-        # increment upvote num
-        print 'x'
+    user = check_validation(request)
+    print "upvote view"
+    if user and request.method == 'POST':
+        form = UpvoteForm(request.POST)
+        if form.is_valid():
+            print 'before cleaned'
+            comment_id = form.cleaned_data.get('id').id
+
+            comment = Comment.objects.filter(comment_id =comment_id).first()
+            print "upvoted not yet"
+            if comment:
+                # print ' unliking post'
+                print "upvoted"
+                comment.upvote_num += 1
+                comment.save()
+
+                #liked_msg = 'Unliked!'
+
+            return redirect('/login_success/')
+        else:
+            return redirect('/login_success/')
+    else:
+        return redirect('/login/')

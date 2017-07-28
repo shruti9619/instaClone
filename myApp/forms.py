@@ -29,3 +29,8 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment_text', 'post', 'id']
+
+class UpvoteForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['id']
