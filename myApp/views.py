@@ -11,6 +11,8 @@ from imgurpython import ImgurClient
 from clarifai.rest import ClarifaiApp , Image as ClImage
 import requests
 import sendgrid
+
+
 # Create your views here.
 
 
@@ -20,7 +22,9 @@ CLIENT_SECRET = 'f453269f0a01ef73760d0343ea5b4d9294ec06de'
 
 PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
-SEND_GRID_KEY = "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"
+
+#key has been changed because if placed on git account gets suspended
+SEND_GRID_KEY = "SG.-wxTqIzQSIS9Kryob6T7pA.RP7mpLSF3BWlQexfv52dLpm6s1g1jxcblZmTlzTb2G"
 
 sndgrd_client = sendgrid.SendGridAPIClient(apikey=SEND_GRID_KEY)
 
@@ -216,7 +220,7 @@ def like_view(request):
 # method to provide form to add a comment
 def comment_view(request):
     user = check_validation(request)
-    abuse_msg = "nothing"
+    abuse_msg = ""
     if user and request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -233,11 +237,11 @@ def comment_view(request):
                 print user.username
                 comment_email(user.username,  post.user.email)
                 comment.save()
-
+                return redirect('/login_success/')
 
             else:
                 abuse_msg = "Please avoid use of abusive language."
-            return render(request,'login_success.html', {'abuse_msg': abuse_msg})
+                return render(request,'login_success.html', {'abuse_msg': abuse_msg})
         else:
 
             return redirect('/login_success/')
@@ -265,7 +269,7 @@ def comment_email(commentor, to_email):
         "content": [
             {
                 "type": "text/html",
-                "value": '<h1>SocioKids</h1><br><br> ' +commentor+' just commented on your post. <br> <br><h2><a href="sociokids.com">Have a look </a></h2>'
+                "value": '<h1>SocioKids</h1><br><br> ' + commentor + ' just commented on your post. <br> <br><h2><a href="sociokids.com">Have a look </a></h2>'
 
             }
         ]
