@@ -22,7 +22,7 @@ PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 SEND_GRID_KEY = "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"
 
-
+sndgrd_client = sendgrid.SendGridAPIClient(apikey=SEND_GRID_KEY)
 
 # password stored using hashing
 def signup_view(request):
@@ -54,7 +54,7 @@ def signup_view(request):
             user = User(name = name, username=username, password = make_password(password), email = email)
             user.save()
             # sending mail after sign up
-            sndgrd_client = sendgrid.SendGridAPIClient(apikey=SEND_GRID_KEY)
+
 
             msg_payload = {
                 "personalizations": [
@@ -74,7 +74,7 @@ def signup_view(request):
                 "content": [
                     {
                         "type": "text/html",
-                        "value": '<h1>Welcome to SocioKids</h1><br><br> Be social media friendly in the safest and most child friendly social environment in the world. <br> <br><h2>Let\'s get started</h2>'
+                        "value": '<h1>Welcome to SocioKids</h1><br><br> Be social media friendly in the safest and most child friendly social environment in the world. <br> <br><h2><a href="sociokids.com"> Let\'s get started</a></h2>'
 
                     }
                 ]
@@ -162,6 +162,7 @@ def post_view(request):
                 image = form.cleaned_data['image']
                 caption = form.cleaned_data['captions']
                 post = Post(user=user, image=image, captions=caption)
+
                 path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
 
                 if checkComment(caption) == 1 and checkImage(path) == 1:
@@ -225,7 +226,15 @@ def comment_view(request):
             print checkComment(comment_text)
             if checkComment(comment_text) == 1:
                 comment = Comment.objects.create(user=user, post_id=post_id, comment_text=comment_text)
+                post = Post.objects.filter(id=post_id).first()
+
+                #user_poster = User.objects.filter(user = post.user).first()
+                print post.user.email
+                print user.username
+                comment_email(user.username,  post.user.email)
                 comment.save()
+
+
             else:
                 abuse_msg = "Please avoid use of abusive language."
             return render(request,'login_success.html', {'abuse_msg': abuse_msg})
@@ -234,6 +243,35 @@ def comment_view(request):
             return redirect('/login_success/')
     else:
         return redirect('/login')
+
+
+
+def comment_email(commentor, to_email):
+    msg_payload = {
+        "personalizations": [
+            {
+                "to": [
+                    {
+                        "email": to_email
+                    }
+                ],
+                "subject": 'Your post is been noticed!'
+            }
+        ],
+        "from": {
+            "email": "admin@sociokids.com",
+            "name": 'SocioAdmin'
+        },
+        "content": [
+            {
+                "type": "text/html",
+                "value": '<h1>SocioKids</h1><br><br> ' +commentor+' just commented on your post. <br> <br><h2><a href="sociokids.com">Have a look </a></h2>'
+
+            }
+        ]
+    }
+    response = sndgrd_client.client.mail.send.post(request_body=msg_payload)
+    print response
 
 
 
