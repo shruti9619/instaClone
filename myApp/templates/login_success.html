@@ -19,6 +19,13 @@
 
 </head>
 <body class="backgroundcol" style=" background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; ">
+<div class="container">
+    <form action="/searchfilter/" method="POST">
+    {% csrf_token %}
+    <input type="text" name="searchquery" class='' placeholder="Search by name">
+    <input type="submit" class="btn btn-default" value="Search">
+</form>
+</div>
 <!--<h1>You have successfully logged in!</h1>-->
 <h1>{{ abuse_msg }}</h1>
 <h3>{{msg}}</h3>
@@ -28,6 +35,7 @@
 <div style="float: right; padding: 20px; ">
 <form action="/logout/" method="POST">
     {% csrf_token %}
+
     <input type="submit" class="btn btn-default" value="Logout">
 </form>
 </div>

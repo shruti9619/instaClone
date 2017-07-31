@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 import datetime
-from forms import SignUpForm, LoginForm, PostForm, LikeForm, CommentForm, UpvoteForm
+from forms import SignUpForm, LoginForm, PostForm, LikeForm, CommentForm, UpvoteForm, SearchForm
 from django.contrib.auth.hashers import make_password, check_password
 from models import User, SessionToken, Post, Like, Comment
 from instaClone.settings import BASE_DIR
@@ -384,5 +384,24 @@ def upvote_view(request):
                 #liked_msg = 'Unliked!'
 
         return redirect('/login_success/')
+    else:
+        return redirect('/login/')
+
+
+
+def query_based_search_view(request):
+
+    user = check_validation(request)
+    if user:
+        if request.method == "POST":
+            searchForm = SearchForm(request.POST)
+            if searchForm.is_valid():
+                print 'valid'
+                username_query = searchForm.cleaned_data.get('searchquery')
+                user_with_query = User.objects.filter(username=username_query).first();
+                posts = Post.objects.filter(user=user_with_query)
+                return render(request, 'login_success.html',{'posts':posts})
+            else:
+                return redirect('/login_success/')
     else:
         return redirect('/login/')

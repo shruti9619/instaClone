@@ -34,3 +34,6 @@ from django import forms
 
 class UpvoteForm(forms.Form):
     id = forms.IntegerField()
+
+class SearchForm(forms.Form):
+    searchquery = forms.CharField();
