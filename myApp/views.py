@@ -25,7 +25,7 @@ PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 #key has been changed because if placed on git account gets suspended
 SEND_GRID_KEY = "SG.-wxTqIzQSIS9Kryob6T7pA.RP7mpLSF3BWlQexfv52dLpm6s1g1jxcblZmTlzTb2G"
-SEND_GRID_KEY = "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"
+
 
 
 sndgrd_client = sendgrid.SendGridAPIClient(apikey=SEND_GRID_KEY)
