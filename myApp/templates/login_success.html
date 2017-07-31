@@ -72,16 +72,16 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 </form>
 </div>
 <!--<h1>You have successfully logged in!</h1>-->
-<h1>{{ abuse_msg }}</h1>
+<div class="msnger" style="text-align: center">
+<h3>{{ abuse_msg }}</h3>
 <h3>{{msg}}</h3>
-
+</div>
 
 <!--block to show posts starts here-->
 {% for post in posts %}
 <div class="postwholecontainer container" style="text-align: center;">
 <div>
-    <h1 style="font-family: 'Lobster', cursive;font-weight: bolder;margin: 1vh;padding: 2vh;background-color: lavenderblush;
-    border-radius: 2vw;">{{ post.captions }}</h1>
+    <h1 class="headingcaptioncontainer" >{{ post.captions }}</h1>
     <hr />
 
     <div class="imageinpostcontainer container-fluid">

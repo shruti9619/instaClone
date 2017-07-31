@@ -33,3 +33,12 @@
     margin: 1vh;
     border-radius: 1vh;
 }
+
+.headingcaptioncontainer{
+    font-family: 'Lobster', cursive;
+    font-weight: bolder;
+    margin: 1vh;
+    padding: 2vh;
+    background-color: lavenderblush;
+    border-radius: 2vw;
+}
