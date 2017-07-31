@@ -169,22 +169,30 @@ def post_view(request):
 
                 path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
 
-                if checkComment(caption) == 1 and checkImage(path) == 1:
+                try:
+                    imageRes = checkImage(path)
+                    captionRes = checkComment(caption)
 
-                    print post.image_url
-                    # adding imgur client to maintain url of images
-                    # try catch edge case if connection fails or image can't be uploaded
-                    try:
-                        client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
-                        post.image_url = client.upload_from_path(path, anon=True)['link']
-                    except:
-                        return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
+                    print imageRes
+                    print captionRes
+                    if captionRes == 1 and imageRes == 1:
 
-                    post.save()
-                    return render(request,'login_success.html',{'msg': 'Post added successfully!'})
-                else:
-                    return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
-                    post.delete()
+                        print post.image_url
+                        # adding imgur client to maintain url of images
+                        # try catch edge case if connection fails or image can't be uploaded
+                        try:
+                            client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+                            post.image_url = client.upload_from_path(path, anon=True)['link']
+                        except:
+                            return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
+
+                        post.save()
+                        return render(request,'login_success.html',{'msg': 'Post added successfully!'})
+                    else:
+                        return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
+                        post.delete()
+                except:
+                    print 'net problem'
     else:
         return redirect('/login/')
 
@@ -293,6 +301,7 @@ def check_validation(request):
 # method to check if img is valid for children
 def checkImage(path):
     app = ClarifaiApp(api_key='ab7ff2b9dc2a4651909930166045d371')
+    flag = False
 
     # get the general model
     try:
@@ -302,13 +311,13 @@ def checkImage(path):
 
         for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
              if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
+                 flag = True
                  if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.5:
                      return 0
                  else:
                      return 1
-             else:
-                 return 1
-        return 0
+        if flag is not True:
+            return 1
     except:
         return 0
 
@@ -330,13 +339,14 @@ def checkComment(commenttext):
             # sentiment = req_json['sentiment']
             print req_json['sentence_type']
             print req_json['confidence_score']
+
             if req_json['sentence_type'] == "Non Abusive":
-                if req_json['confidence_score'] > 0.60:
-                    return 1
-                else:
-                    return 0
+                return 1
             else:
-                return 0
+                if req_json['confidence_score'] > 0.60:
+                    return 0
+                else:
+                    return 1
     except:
         return 0
 

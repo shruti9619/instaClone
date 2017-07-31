@@ -18,27 +18,63 @@
 
 
 </head>
-<body class="backgroundcol" style=" background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; ">
+<body class="backgroundcol" style=" background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; "
+data-spy="scroll" data-target=".navbar" data-offset="50px">
+
+
+
+
+<!--navbar code-->
+<!-- navbar start-->
+<div class="navclass">
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container-fluid">
+	<div class="row">
+	<div class="col-md-4 col-lg-4">
+
+		<div class="navbar-header">
+        	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+      		</button>
+      		<a class="navbar-brand" href="#">SocioKids</a>
+    	</div>
+    	</div>
+    	<div class="col-md-8 col-lg-8">
+    	<div class="navbar-collapse collapse " id="myNavbar">
+    		<ul class="nav navbar-nav">
+    			<li><a href="/post/">Add post</a></li>
+    			<li><a href="#seepostsdiv">Update Posts</a></li>
+    			<li><a href="#creatediv">Search Post</a></li>
+                <li>{% csrf_token %}<a href="/logout/"> Logout</a></li>
+    		</ul>
+    	</div>
+    	</div>
+    	</div>
+    	</div>
+	</nav>
+</div>
+
+<!--nav ends here-->
+
+<br><br>
 <div class="container">
+
     <form action="/searchfilter/" method="POST">
     {% csrf_token %}
     <input type="text" name="searchquery" class='' placeholder="Search by name">
     <input type="submit" class="btn btn-default" value="Search">
+
 </form>
 </div>
 <!--<h1>You have successfully logged in!</h1>-->
 <h1>{{ abuse_msg }}</h1>
 <h3>{{msg}}</h3>
-<div style="text-align: center;">
-<button><a href="post/">Add New Post</a></button>
-</div>
-<div style="float: right; padding: 20px; ">
-<form action="/logout/" method="POST">
-    {% csrf_token %}
 
-    <input type="submit" class="btn btn-default" value="Logout">
-</form>
-</div>
+
+<!--block to show posts starts here-->
 {% for post in posts %}
 <div style="text-align: center;">
 <div>
@@ -53,6 +89,8 @@
         </div>
 
     </div>
+
+    <!--like button form starts here-->
 
         <form method="POST" action="/like/">
           {% csrf_token %}
@@ -69,6 +107,7 @@
         {% endif %}
       </form>
 
+    <!--adding comment form starts here-->
 
     <form method="POST" action="/comment/">
   {% csrf_token %}
@@ -78,9 +117,9 @@
 
   <input type="submit" class="btn-default btn" value="Comment">
     </form>
-    <div>
 
-        </div>
+
+    <!--display comments div starts here-->
 
       <div>
 
