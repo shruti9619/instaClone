@@ -15,10 +15,12 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
+    <link rel="stylesheet" href="{% static 'css/postsheet.css' %}" type="text/css" >
 
+<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 
 </head>
-<body class="backgroundcol" style=" background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; "
+<body class="backgroundcol" style=" position: relative;background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; "
 data-spy="scroll" data-target=".navbar" data-offset="50px">
 
 
@@ -76,21 +78,28 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 
 <!--block to show posts starts here-->
 {% for post in posts %}
-<div style="text-align: center;">
+<div class="postwholecontainer container" style="text-align: center;">
 <div>
-    <h3> Posted by: {{ post.user.username }}</h3>
-    <img height="350px" width="350px" src="{{ post.image_url }}">
-    <div>
-    <span>{{ post.caption }}</span>
-    <span>{{ post.created_on }}</span>
+    <h1 style="font-family: 'Lobster', cursive;font-weight: bolder;margin: 1vh;padding: 2vh;background-color: lavenderblush;
+    border-radius: 2vw;">{{ post.captions }}</h1>
+    <hr />
+
+    <div class="imageinpostcontainer container-fluid">
+
+    <img class="img-responsive"  height="350px" width="350px" src="{{ post.image_url }}">
+
+
+        <div class="postdetailcontainer">
+        <div>Posted by: {{ post.user.username }}</div>
+    <div>{{ post.created_on }}</div>
     <!--<span>{{post.image_url}}</span>-->
-    <span>Likes: {{post.like_count}}</span>
+    <div>Likes: {{post.like_count}}</div>
+            </div>
 
-        </div>
 
-    </div>
 
-    <!--like button form starts here-->
+        <br>
+     <!--like button form starts here-->
 
         <form method="POST" action="/like/">
           {% csrf_token %}
@@ -107,16 +116,33 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
         {% endif %}
       </form>
 
-    <!--adding comment form starts here-->
+        </div>
 
+
+
+
+    <div>
+
+        </div>
+
+    </div>
+
+
+
+    <div>
     <form method="POST" action="/comment/">
   {% csrf_token %}
   <input type="hidden" name="post" value="{{ post.id }}" >
-  <input type="text" name="comment_text" id="comment_text" placeholder="Make a comment.." value="{{ comment_text }}">
+  <input type="text" style="border-radius: 0.5vw; padding: 2vw; margin: 2vw; " name="comment_text" id="comment_text" placeholder="Make a comment.."
+         value="{{ comment_text }}">
   <!--{{ comment_text }}-->
 
   <input type="submit" class="btn-default btn" value="Comment">
     </form>
+</div>
+    <!--adding comment form starts here-->
+<div class="commentinpostcontainer container-fluid">
+
 
 
     <!--display comments div starts here-->
@@ -138,9 +164,9 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
               <input type="submit" class="btn btn-default" value="Upvote">
 
           </form><span>Upvotes: {{comment.upvote_num}}</span>
-
+        <hr />
       {% endfor %}
-
+</div>
       </div>
 </div>
  <hr />

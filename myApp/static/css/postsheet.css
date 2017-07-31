@@ -1,0 +1,35 @@
+.postwholecontainer{
+    max-width: 80vw;
+    background-color: antiquewhite;
+    border-radius: 3vh;
+    margin-left: auto ;
+  margin-right: auto ;
+    border: 0.125vw dashed black;
+
+}
+
+.imageinpostcontainer{
+    float: left;
+    background-color: lightsalmon;
+    padding: 2vh;
+    margin: 4vh;
+    border-radius: 2vh;
+}
+
+.commentinpostcontainer{
+     float: right;
+    margin: 2vh;
+    margin-right: 9vw;
+    height: 50vh;
+    padding: 3vh;
+    background-color: burlywood;
+    border-radius: 2vh;
+    overflow-x: auto;
+}
+
+.postdetailcontainer{
+    background-color: wheat;
+    padding: 1vh;
+    margin: 1vh;
+    border-radius: 1vh;
+}
