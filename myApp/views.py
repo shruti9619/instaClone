@@ -171,34 +171,34 @@ def post_view(request):
 
                 path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
                 post.save()
-                # try:
-                imageRes = checkImage(path)
-                captionRes = checkComment(caption)
+                try:
+                    imageRes = checkImage(path)
+                    captionRes = checkComment(caption)
 
-                print imageRes
-                print captionRes
-                if captionRes == 1 and imageRes == 1:
+                    print imageRes
+                    print captionRes
+                    if captionRes == 1 and imageRes == 1:
 
-                    print post.image_url
-                    # adding imgur client to maintain url of images
-                    # try catch edge case if connection fails or image can't be uploaded
-                    try:
-                        client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
-                        post.image_url = client.upload_from_path(path, anon=True)['link']
-                        post.save()
-                    except:
-                        print 'Failed to upload'
+                        print post.image_url
+                        # adding imgur client to maintain url of images
+                        # try catch edge case if connection fails or image can't be uploaded
+                        try:
+                            client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+                            post.image_url = client.upload_from_path(path, anon=True)['link']
+                            post.save()
+                        except:
+                            print 'Failed to upload'
+                            post.delete()
+                            return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
+
+
+
+                        return render(request,'login_success.html',{'msg': 'Post added successfully!'})
+                    else:
+                        return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
                         post.delete()
-                        return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
-
-
-
-                    return render(request,'login_success.html',{'msg': 'Post added successfully!'})
-                else:
-                    return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
-                    post.delete()
-                # except:
-                #     print 'net problem'
+                except:
+                    print 'net problem'
             return redirect('/post/')
     else:
         return redirect('/login/')
@@ -246,8 +246,6 @@ def comment_view(request):
             if checkComment(comment_text) == 1:
                 comment = Comment.objects.create(user=user, post_id=post_id, comment_text=comment_text)
                 post = Post.objects.filter(id=post_id).first()
-
-                #user_poster = User.objects.filter(user = post.user).first()
                 comment_email(user.username,  post.user.email)
                 comment.save()
                 return redirect('/login_success/')
@@ -287,8 +285,11 @@ def comment_email(commentor, to_email):
             }
         ]
     }
-    response = sndgrd_client.client.mail.send.post(request_body=msg_payload)
-    print response
+    try:
+        response = sndgrd_client.client.mail.send.post(request_body=msg_payload)
+        print response
+    except:
+        print ''
 
 
 
@@ -309,22 +310,22 @@ def checkImage(path):
     flag = False
 
     # get the general model
-    # try:
-    model = app.models.get('general-v1.3')
-    image = ClImage(file_obj=open(path, 'rb'))
-    pred = model.predict([image])
+    try:
+        model = app.models.get('general-v1.3')
+        image = ClImage(file_obj=open(path, 'rb'))
+        pred = model.predict([image])
 
-    for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
-         if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
-             flag = True
-             if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.7:
-                 return 0
-             else:
-                 return 1
-    if flag is not True:
-        return 1
-    # except:
-    #     return 0
+        for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
+             if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
+                 flag = True
+                 if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.7:
+                     return 0
+                 else:
+                     return 1
+        if flag is not True:
+            return 1
+    except:
+        return 0
 
 
 
