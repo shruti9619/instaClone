@@ -4,14 +4,15 @@
     border-radius: 3vh;
     margin-left: auto ;
   margin-right: auto ;
-    border: 0.125vw dashed black;
+    border: 0.125vw dashed crimson;
+    padding: 2vw;
 
 }
 
 .imageinpostcontainer{
     float: left;
     background-color: lightsalmon;
-    padding: 2vh;
+    padding: 1vh;
     margin: 4vh;
     border-radius: 2vh;
 }
@@ -30,15 +31,26 @@
 .postdetailcontainer{
     background-color: wheat;
     padding: 1vh;
-    margin: 1vh;
+    /*margin: 1vh;*/
+    width: 100%;
     border-radius: 1vh;
 }
 
 .headingcaptioncontainer{
     font-family: 'Lobster', cursive;
     font-weight: bolder;
-    margin: 1vh;
+    color: crimson;
+    margin: 3vw;
+    margin-top: 3vh;
     padding: 2vh;
-    background-color: lavenderblush;
+    background-color: azure;
     border-radius: 2vw;
+    border: 0.01vw dashed crimson;
+}
+
+.headerlink{
+    font-family: 'Lobster', cursive;
+    font-weight: bolder;
+    font-size: 2vw;
+    color: crimson;
 }

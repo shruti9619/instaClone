@@ -170,31 +170,36 @@ def post_view(request):
                 post = Post(user=user, image=image, captions=caption)
 
                 path = str(BASE_DIR + '\\user_image_set\\' + post.image.url)
+                post.save()
+                # try:
+                imageRes = checkImage(path)
+                captionRes = checkComment(caption)
 
-                try:
-                    imageRes = checkImage(path)
-                    captionRes = checkComment(caption)
+                print imageRes
+                print captionRes
+                if captionRes == 1 and imageRes == 1:
 
-                    print imageRes
-                    print captionRes
-                    if captionRes == 1 and imageRes == 1:
-
-                        print post.image_url
-                        # adding imgur client to maintain url of images
-                        # try catch edge case if connection fails or image can't be uploaded
-                        try:
-                            client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
-                            post.image_url = client.upload_from_path(path, anon=True)['link']
-                        except:
-                            return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
-
+                    print post.image_url
+                    # adding imgur client to maintain url of images
+                    # try catch edge case if connection fails or image can't be uploaded
+                    try:
+                        client = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+                        post.image_url = client.upload_from_path(path, anon=True)['link']
                         post.save()
-                        return render(request,'login_success.html',{'msg': 'Post added successfully!'})
-                    else:
-                        return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
+                    except:
+                        print 'Failed to upload'
                         post.delete()
-                except:
-                    print 'net problem'
+                        return render(request, 'post.html', {'msg': 'Failed to upload! Try again later'})
+
+
+
+                    return render(request,'login_success.html',{'msg': 'Post added successfully!'})
+                else:
+                    return render(request, 'login_success.html', {'msg': 'Please avoid use of obscene language and images'})
+                    post.delete()
+                # except:
+                #     print 'net problem'
+            return redirect('/post/')
     else:
         return redirect('/login/')
 
@@ -243,8 +248,6 @@ def comment_view(request):
                 post = Post.objects.filter(id=post_id).first()
 
                 #user_poster = User.objects.filter(user = post.user).first()
-                print post.user.email
-                print user.username
                 comment_email(user.username,  post.user.email)
                 comment.save()
                 return redirect('/login_success/')
@@ -306,22 +309,22 @@ def checkImage(path):
     flag = False
 
     # get the general model
-    try:
-        model = app.models.get('general-v1.3')
-        image = ClImage(file_obj=open(path, 'rb'))
-        pred = model.predict([image])
+    # try:
+    model = app.models.get('general-v1.3')
+    image = ClImage(file_obj=open(path, 'rb'))
+    pred = model.predict([image])
 
-        for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
-             if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
-                 flag = True
-                 if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.5:
-                     return 0
-                 else:
-                     return 1
-        if flag is not True:
-            return 1
-    except:
-        return 0
+    for i in range(0, len(pred['outputs'][0]['data']['concepts'])):
+         if pred['outputs'][0]['data']['concepts'][i]['name'] == "adult":
+             flag = True
+             if pred['outputs'][0]['data']['concepts'][i]['value'] > 0.7:
+                 return 0
+             else:
+                 return 1
+    if flag is not True:
+        return 1
+    # except:
+    #     return 0
 
 
 
@@ -405,11 +408,12 @@ def query_based_search_view(request):
 
     user = check_validation(request)
     if user:
-        if request.method == "POST":
-            searchForm = SearchForm(request.POST)
+        if request.method == "GET":
+            searchForm = SearchForm(request.GET)
             if searchForm.is_valid():
                 print 'valid'
                 username_query = searchForm.cleaned_data.get('searchquery')
+                print username_query
                 user_with_query = User.objects.filter(username=username_query).first();
                 posts = Post.objects.filter(user=user_with_query)
                 return render(request, 'login_success.html',{'posts':posts})

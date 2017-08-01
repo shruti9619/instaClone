@@ -41,16 +41,16 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 	          <span class="icon-bar"></span>
 	          <span class="icon-bar"></span>
       		</button>
-      		<a class="navbar-brand" href="#">SocioKids</a>
+      		<a class="navbar-brand headerlink" style="color: crimson;" href="/login_success/">SocioKids</a>
     	</div>
     	</div>
     	<div class="col-md-8 col-lg-8">
     	<div class="navbar-collapse collapse " id="myNavbar">
     		<ul class="nav navbar-nav">
-    			<li><a href="/post/">Add post</a></li>
-    			<li><a href="#seepostsdiv">Update Posts</a></li>
-    			<li><a href="#creatediv">Search Post</a></li>
-                <li>{% csrf_token %}<a href="/logout/"> Logout</a></li>
+    			<li><a href="/post/" class="headerlink" style="color: crimson;">Add post</a></li>
+    			<li><a href="/login_success/" class="headerlink" style="color: crimson;">Posts</a></li>
+    			<li><a href="#creatediv" class="headerlink" style="color: crimson;">Search Post</a></li>
+                <li>{% csrf_token %}<a href="/logout/" class="headerlink" style="color: crimson;"> Logout</a></li>
     		</ul>
     	</div>
     	</div>
@@ -64,7 +64,7 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 <br><br>
 <div class="container">
 
-    <form action="/searchfilter/" method="POST">
+    <form action="/searchfilter/" method="GET">
     {% csrf_token %}
     <input type="text" name="searchquery" class='' placeholder="Search by name">
     <input type="submit" class="btn btn-default" value="Search">
@@ -90,8 +90,8 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 
 
         <div class="postdetailcontainer">
-        <div>Posted by: {{ post.user.username }}</div>
-    <div>{{ post.created_on }}</div>
+        <span>Posted by: {{ post.user.username }}</span>
+    <span>{{ post.created_on }}</span>
     <!--<span>{{post.image_url}}</span>-->
     <div>Likes: {{post.like_count}}</div>
             </div>
