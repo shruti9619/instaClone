@@ -146,7 +146,7 @@ def login_success_view(request):
                 post.creator_has_liked = True
 
         #num_of_likes =
-        return render(request, 'login_success.html', {'posts': posts, 'msg':'Welcome '+user.username})
+        return render(request, 'login_success.html', {'posts': posts, 'msg':'Welcome '+user.username, 'comment_len':len(posts)})
     else:
         return redirect('/login/')
     #return render(request,'login_success.html',response_data)

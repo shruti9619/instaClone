@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome back SocioKid</title>
+    <title>SocioKid</title>
     {% load staticfiles %}
 
        <!-- Latest compiled and minified CSS -->
@@ -118,13 +118,6 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
 
         </div>
 
-
-
-
-    <div>
-
-        </div>
-
     </div>
 
 
@@ -140,34 +133,41 @@ data-spy="scroll" data-target=".navbar" data-offset="50px">
   <input type="submit" class="btn-default btn" value="Comment">
     </form>
 </div>
-    <!--adding comment form starts here-->
-<div class="commentinpostcontainer container-fluid">
+     {% if post.comments  %}
+            <!--reading comment form starts here-->
+            <div class="commentinpostcontainer container-fluid">
 
+                <!--display comments div starts here-->
 
+                  <div>
 
-    <!--display comments div starts here-->
+                  {% for comment in post.comments %}
 
-      <div>
+                    <p>
+                      {{ comment.user.username }}
+                      {{ comment.created_on }}: {{ comment.comment_text }}
+                    </p>
 
-      {% for comment in post.comments %}
+                      <form method="POST" action="/upvote/">
+                          {% csrf_token %}
 
-        <p>
-          {{ comment.user.username }}
-          {{ comment.created_on }}: {{ comment.comment_text }}
-        </p>
+                          <input type="hidden" name="id" value="{{ comment.id }}">
 
-          <form method="POST" action="/upvote/">
-              {% csrf_token %}
+                          <input type="submit" class="btn btn-default" value="Upvote">
 
-              <input type="hidden" name="id" value="{{ comment.id }}">
+                      </form><span>Upvotes: {{comment.upvote_num}}</span>
+                    <hr />
+                  {% endfor %}
+                </div>
 
-              <input type="submit" class="btn btn-default" value="Upvote">
+            </div>
 
-          </form><span>Upvotes: {{comment.upvote_num}}</span>
-        <hr />
-      {% endfor %}
-</div>
-      </div>
+    {% else %}
+    <div>
+        Add comments
+    </div>
+
+    {% endif %}
 </div>
  <hr />
   {% endfor %}
