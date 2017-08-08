@@ -29,13 +29,18 @@
 <body class="backgroundcol" style="background: url('{% static 'images/backgroundkids.jpg' %}') no-repeat center center fixed; ">
 
 <!--Time : {{today}} {{x}}-->
-
+<div class="container" style=" margin: 2vh; background-color: lavender;color: red; border-radius: 5vh; font-size: 5vh; text-align: center; margin-left: auto ;
+  margin-right: auto ;">
+        {{msg}}
+    </div>
 <div class="container centercon borders "> <!--left-mover-->
 
 
      <h1><span class="centertext">SocioKids</span></h1>
     <h2><span class="centertext">SignUp</span></h2>
     <br />
+     <br>
+
   <form id="hide" method="post">
       {% csrf_token %}
       <div class="form-group">
@@ -59,14 +64,12 @@
     <button type="submit" class="btn btn-default">Sign Up</button>
 
   </form>
-    <br>
-    <div class="container">
-        {{msg}}
-    </div>
+
 <br>
     <div class="btn btn-default" >
         <a href="login/">Already Registered? Login</a>
     </div>
+
 </div>
 </body>
 </html>

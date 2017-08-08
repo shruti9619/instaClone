@@ -24,7 +24,7 @@ PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 
 #key has been changed because if placed on git account gets suspended
-SEND_GRID_KEY = "SG.-wxTqIzQSIS9Kryob6T7pA.RP7mpLSF3BWlQexfv52dLpm6s1g1jxcblZmTlzTb2G"
+SEND_GRID_KEY = "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"
 
 
 
@@ -43,8 +43,10 @@ def signup_view(request):
 
             if len(username) < 4:
                 response_data['msg']= 'Username should have atleast 4 characters'
+                return render(request, 'index.html', response_data)
             if len(password) < 5:
                 response_data['msg'] = 'Password should have atleast 5 characters'
+                return render(request, 'index.html', response_data)
 
             # to check if user with the same username or email already exists
             users = User.objects.all()
@@ -119,6 +121,7 @@ def login_view(request):
                     print 'User is logged in'
                     response = redirect('login_success/')
                     response.set_cookie(key='session_token', value=token.session_token)
+
                     return response
                     #return render(request,'login_success.html')
                 else:
