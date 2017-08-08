@@ -43,9 +43,14 @@ def signup_view(request):
 
             if len(username) < 4:
                 response_data['msg']= 'Username should have atleast 4 characters'
+                response_data['email'] = email
+                response_data['name'] = name
                 return render(request, 'index.html', response_data)
             if len(password) < 5:
                 response_data['msg'] = 'Password should have atleast 5 characters'
+                response_data['email'] = email
+                response_data['name'] = name
+                response_data['username'] = username
                 return render(request, 'index.html', response_data)
 
             # to check if user with the same username or email already exists
