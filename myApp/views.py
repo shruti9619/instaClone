@@ -24,7 +24,7 @@ PARALLEL_DOTS_KEY = "ddqUK3gJCSCzveJUZprtLXjHsiERfEa6dz0df1ZGi9c"
 
 
 #key has been changed because if placed on git account gets suspended
-SEND_GRID_KEY = "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"
+SEND_GRID_KEY = "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"
 
 
 
