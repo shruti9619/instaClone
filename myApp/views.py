@@ -339,16 +339,16 @@ def checkImage(path):
 
 
 # method to check if comment is decent or abusive with parallel dots
-def checkComment(commenttext):
+def checkComment(comment_text):
     req_json = None
-    req_url = "https://apis.paralleldots.com/abuse"
+    req_url = "https://apis.paralleldots.com/v2/abuse"
     payload = {
-  "text": commenttext,
-  "apikey": PARALLEL_DOTS_KEY
-}
+  "text": comment_text,
+  "api_key": PARALLEL_DOTS_KEY}
     # 1 is for non abusive and 0 is for abusive
     try:
-        req_json = requests.post(req_url, payload).json()
+        req = requests.post(req_url, payload)
+        req_json = req.json()
         if req_json is not None:
             # sentiment = req_json['sentiment']
             print req_json['sentence_type']
@@ -357,12 +357,12 @@ def checkComment(commenttext):
             if req_json['sentence_type'] == "Non Abusive":
                 return 1
             else:
-                if req_json['confidence_score'] > 0.60:
+                if req_json['confidence_score'] > 0.85:
                     return 0
                 else:
                     return 1
     except:
-        return 0
+        return 1
 
 
 

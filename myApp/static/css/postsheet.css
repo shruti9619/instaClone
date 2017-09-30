@@ -20,7 +20,7 @@
 .commentinpostcontainer{
      float: right;
     margin: 2vh;
-    margin-right: 9vw;
+    margin-right: 13vw;
     height: 50vh;
     padding: 3vh;
     background-color: burlywood;
@@ -33,7 +33,7 @@
     padding: 1vh;
     /*margin: 1vh;*/
     width: 100%;
-    border-radius: 1vh;
+    /*border-radius: 1vh;*/
 }
 
 .headingcaptioncontainer{
@@ -43,7 +43,7 @@
     margin: 3vw;
     margin-top: 3vh;
     padding: 2vh;
-    background-color: azure;
+    background-color: lightgoldenrodyellow;
     border: 0.01vw solid crimson;
 }
 
