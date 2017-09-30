@@ -25,7 +25,7 @@ SECRET_KEY = 'yzsb5=0525@n%f2gf8imh2%d9ytb58)8mg5ahn9@*e$1e*15d='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["shru.pythonanywhere.com"]
+ALLOWED_HOSTS = ["127.0.0.1","shru.pythonanywhere.com"]
 
 
 # Application definition
