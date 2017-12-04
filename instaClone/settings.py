@@ -120,10 +120,10 @@ USE_TZ = True
 
 #STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, '/myApp/static')
-STATIC_URL = '/myApp/static/'
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'myApp/static'),
+    os.path.join(PROJECT_ROOT, 'static'),
 )
