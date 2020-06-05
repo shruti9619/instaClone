@@ -1,6 +1,6 @@
 chardet==3.0.4
 clarifai==2.0.30
-Django==1.11.3
+Django==1.11.29
 imgurpython==1.1.7
 python-dateutil==2.6.0
 requests==2.13.0
