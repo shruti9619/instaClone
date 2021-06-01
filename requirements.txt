@@ -5,7 +5,7 @@ imgurpython==1.1.7
 python-dateutil==2.6.0
 requests==2.13.0
 sendgrid==4.2.0
-urllib3==1.21.1
+urllib3==1.26.5
 enum==0.4.6
 enum34==1.1.6
 
